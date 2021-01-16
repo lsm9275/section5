@@ -3,7 +3,7 @@ import simplejson as json
 import datetime
 
 #DB생성(파일)
-conn = sqlite3.connect('C:/Django/workspace/python-class1/section5/database/sqlite.db')
+conn = sqlite3.connect('D:/6_PWork/5_inflearn/01_Python_Automation_and_GUI/Section5/database/sqlite1.db')
 
 #날짜 생성
 now = datetime.datetime.now()
@@ -17,10 +17,10 @@ print('sqlite3.version : ',sqlite3.version)
 print('sqlite3.sqlite_version',sqlite3.sqlite_version)
 
 #DB생성 & Autocommit
-conn = sqlite3.connect('c:/section5/database/sqlite.db', isolation_level=None)
+conn = sqlite3.connect('D:/6_PWork/5_inflearn/01_Python_Automation_and_GUI/Section5/database/sqlite1.db', isolation_level=None)
 
 #DB생성(메모리)
-conn = sqlite3.connect(":memory:")
+#conn = sqlite3.connect(":memory:")
 
 #Cursor연결
 c = conn.cursor()
@@ -30,8 +30,8 @@ print(type(c))
 c.execute("CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, username text, email text, phone text, website text, regdate text)") #AUTOINCREMENT
 
 #데이터 삽입
-c.execute("INSERT INTO users VALUES (1 ,'kim','kim@naver.com', '010-0000-0000', 'kim.com', ?)", (nowDatetime,))
-c.execute("INSERT INTO users(id, username, email, phone, website, regdate) VALUES (?, ?, ?, ?, ?, ?)", (2, 'park', 'park@naver.com', '010-1111-1111', 'park.com', nowDatetime))
+#c.execute("INSERT INTO users VALUES (1 ,'kim','kim@naver.com', '010-0000-0000', 'kim.com', ?)", (nowDatetime,))
+#c.execute("INSERT INTO users(id, username, email, phone, website, regdate) VALUES (?, ?, ?, ?, ?, ?)", (2, 'park', 'park@naver.com', '010-1111-1111', 'park.com', nowDatetime))
 
 #Many 삽입(튜플, 리스트 가능)
 userList = (
@@ -39,6 +39,47 @@ userList = (
     (4 ,'cho','cho@naver.com', '010-3333-3333', 'cho.com', nowDatetime),
     (5 ,'noh','noh@naver.com', '010-4444-4444', 'noh.com', nowDatetime)
 )
+#데이터 삽입
+#c.executemany("INSERT INTO users(id, username, email, phone, website, regdate) VALUES (?,?,?,?,?,?)",userList)
+
+#json삽입
+with open('D:/6_PWork/5_inflearn/01_Python_Automation_and_GUI/Section5/data/users.json', 'r') as infile:
+    r = json.load(infile)
+    userData = []
+    for user in r:
+        t = (user['id'], user['username'], user['email'], user['phone'], user['website'], nowDatetime)
+        #print('t', t)
+        userData.append(t)
+    #print('userData', userData)
+    #print('userData', tuple(userData))
+    c.executemany("INSERT INTO users(id, username, email, phone, website, regdate) VALUES (?,?,?,?,?,?)",userData)
+
+
+c.execute("CREATE TABLE IF NOT EXISTS todos(id INTEGER PRIMARY KEY, userId INTEGER, title text, completed text, regdate text)")
+
+with open('D:/6_PWork/5_inflearn/01_Python_Automation_and_GUI/Section5/data/todos.json', 'r') as infile:
+    r = json.load(infile)
+    todoData = []
+    for todo in r:
+        t = (todo['id'], todo['userId'], todo['title'], todo['completed'], nowDatetime)
+        #print('t', t)
+        todoData.append(t)
+    c.executemany("INSERT INTO todos(id, userId, title, completed, regdate) VALUES (?,?,?,?,?)", todoData)
+#print("users db delete", conn.execute("delete from users").rowcount,"rows")
+conn.commit()
+
+conn.close()
+
+
+
+
+
+
+
+
+
+
+'''
 c.executemany("INSERT INTO users(id, username, email, phone, website, regdate) VALUES (?, ?, ?, ?, ?, ?)", userList)
 
 #JSON to Sqlite 삽입1
@@ -68,3 +109,4 @@ conn.commit()
 
 #접속 해제
 conn.close()
+'''

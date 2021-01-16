@@ -1,6 +1,63 @@
 import sqlite3
 
 #DB생성(파일)
+conn = sqlite3.connect('D:/6_PWork/5_inflearn/01_Python_Automation_and_GUI/Section5/database/sqlite1.db')
+
+c = conn.cursor()
+
+#데이터 조회(전체)
+c.execute("SELECT * FROM users")
+
+#1개 로우 선택
+#print(c.fetchone())
+
+#지정 로우 선택
+#print(c.fetchmany(size=4))
+
+#전체 로우 선택
+#print(c.fetchall())
+#print(c.fetchone())
+
+#순회1
+#rows = c.fetchall()
+#for row in rows:
+#    print('usage1 > ', row)
+
+#for row in c.fetchall():
+#    print('usage2 > ', row)
+
+#for row in c.execute("SELECT * FROM users"):
+#    print('usage3 > ', row)
+
+param1 = (1, )
+c.execute("SELECT * FROM users WHERE id=?", param1)
+print(c.fetchall())
+
+param2 = 1
+c.execute("SELECT * FROM users WHERE id='%s'" % param2)
+print(c.fetchall())
+
+c.execute("SELECT * FROM users WHERE id=:id", {"id":1})
+print(c.fetchall())
+
+param4 = (1,4)
+c.execute("SELECT * FROM users WHERE id IN(?,?)", param4)
+print(c.fetchall())
+
+with conn:
+    #dump print
+    with open('D:/6_PWork/5_inflearn/01_Python_Automation_and_GUI/Section5/data/test.dump', 'w') as f:
+        for line in conn.iterdump():
+            f.write('%s\n' % line)
+        print("Dump Write Completed!")
+
+
+
+
+'''
+import sqlite3
+
+#DB생성(파일)
 conn = sqlite3.connect('C:/Django/workspace/python-class1/section5/database/sqlite.db')
 
 #커서 바인딩
@@ -68,3 +125,4 @@ with conn:
         for line in conn.iterdump():
             f.write('%s\n' % line)
         print('Dump Print Complete.')
+'''
